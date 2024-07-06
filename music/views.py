@@ -1,10 +1,12 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.contrib import messages
-
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, auth
 from django.contrib.auth import authenticate 
 
+
+@login_required
 def index(request):
     return render(request,'index.html',{})
 def login(request):
@@ -41,11 +43,14 @@ def signup(request):
                 
                 userLogin = authenticate(username=username,password=password)
                 auth.login(request,userLogin)
+        
                 return redirect('/')
         else:
             messages.info(request,'password not matching')
             return redirect('signup')
     else:
         return render(request,'signup.html')
+@login_required
 def logout(request):
-    pass
+    auth.logout(request)
+    return redirect('login')
